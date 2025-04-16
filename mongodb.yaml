@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+ name: mongoinst
+spec:
+ replicas: 1
+ serviceName: mongosvc
+ selector:
+   matchLabels:
+    apptype: db
+    env: dev
+ template:
+   metadata:
+     name: dbtemp
+     labels:
+       apptype: db
+       env: dev
+   spec:
+    containers:
+    - image: sudarshanlnx/mongo:latest
+      name: dbcon
+      imagePullPolicy: Always
+      ports:
+      - name: mongo
+        containerPort: 27017
+        protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: mongosvc
+spec:
+ ports:
+ - name: mongo
+   port: 27017
+   targetPort: 27017
+   protocol: TCP
+ selector:
+   apptype: db
+   env: dev
+
